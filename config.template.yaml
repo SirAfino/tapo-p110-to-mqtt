@@ -1,0 +1,12 @@
+plugs:
+  - id: "plug0"
+    ip: "192.168.X.Y"
+    username: "user@mail.com"
+    password: "pwd"
+    scan_interval: 5
+
+mqtt:
+  host: "192.168.X.Z"
+  user: "tapo"
+  password: "pwd"
+  topic_prefix: "tapo/"
