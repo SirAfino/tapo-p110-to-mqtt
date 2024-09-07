@@ -25,23 +25,18 @@ class TapoPlugMonitor():
         self._mqtt_client = mqtt_client
         self._mqtt_topic = mqtt_topic
         self._scan_interval = scan_interval
-        self._plug = None
+        self._plug = PyP110.P110(self._ip, self._username, self._password)
+        logger.debug("{0}: Created".format(self._mqtt_topic))
 
     def connect(self):
         try:
-            self._plug = PyP110.P110(self._ip, self._username, self._password)
-            logger.debug("{0}: Created".format(self._mqtt_topic))
-            self._plug.handshake()
-            logger.debug("{0}: Handshake done".format(self._mqtt_topic))
             self._plug.login()
-            logger.debug("{0}: Login done".format(self._mqtt_topic))
             return True
         except Exception as e:
-            logger.error("{0} {1}".format(self._mqtt_topic, e))
+            logger.error("{0}: Login error {1}".format(self._mqtt_topic, e))
             return False
 
     async def run(self):
-        logger
         logger.info("{0}: Trying to connect...".format(self._mqtt_topic))
         while not self.connect():
             await asyncio.sleep(60)
@@ -49,7 +44,10 @@ class TapoPlugMonitor():
 
         while True:
             try:
+                while not self.connect():
+                    await asyncio.sleep(60)
                 data = self._plug.getEnergyUsage()
+                logger.debug("{0}: Publishing data {1}".format(self._mqtt_topic, data))
                 self._mqtt_client.publish(self._mqtt_topic, json.dumps(data))
             except:
                 pass

@@ -4,9 +4,11 @@ import yaml
 from TapoLogger import logger
 from TapoPlugMonitor import TapoPlugMonitor
 
+APP_NAME = "Tapo to MQTT"
+
 def loadConfig(path):
     config = None
-    logger.debug('Loading config from: ' + path)
+    logger.debug('Loading configuration from: ' + path)
     try:
         with open(path, "r") as file:
             config = yaml.safe_load(file)
@@ -29,7 +31,7 @@ def connectToMQTT(host: str, user: str, password: str) -> mqtt.Client:
 
 
 async def main():
-    logger.info("Tapo Plug to MQTT")
+    logger.info(APP_NAME)
 
     config = loadConfig('config.yaml')
     if config is None:
